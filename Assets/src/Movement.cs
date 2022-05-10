@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ public class Movement : MonoBehaviour
 {
     [SerializeField] private float mainThrust = 100f;
     [SerializeField] private float rotationThrust = 1f;
+    [SerializeField] private AudioClip mainEngine = default;
     private Rigidbody rb;
     private AudioSource audioSource;
 
@@ -30,7 +32,7 @@ public class Movement : MonoBehaviour
             rb.AddRelativeForce(Vector3.up * mainThrust * Time.deltaTime);
             if (!audioSource.isPlaying)
             {
-                audioSource.Play();
+                audioSource.PlayOneShot(mainEngine);
             }
         }
         else
