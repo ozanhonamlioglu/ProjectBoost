@@ -7,13 +7,17 @@ public class CollisionHandler : MonoBehaviour
     [SerializeField] private float levelLoadDelay = 2f;
     [SerializeField] private AudioClip success = default;
     [SerializeField] private AudioClip fail = default;
+    [SerializeField] private ParticleSystem successParticle = default;
+    [SerializeField] private ParticleSystem crashParticle = default;
 
     private AudioSource audioSource;
     private bool onSuccessOrFail = false;
+    private Movement _movement;
 
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        _movement = GetComponent<Movement>();
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -34,27 +38,32 @@ public class CollisionHandler : MonoBehaviour
 
     private void StartSuccessSequence()
     {
-        // todo add particle effect upon crash
         if(!onSuccessOrFail)
         {
             audioSource.Stop(); // stop other sources
             audioSource.PlayOneShot(success);
+            successParticle.Play();
             onSuccessOrFail = true;
         };
-        GetComponent<Movement>().enabled = false;
+        _movement.enabled = false;
         Invoke("LoadNextLevel", levelLoadDelay);
     }
 
     private void StartCrashSequence()
     {
-        // todo add particle effect upon crash
         if(!onSuccessOrFail)
         {
             audioSource.Stop(); // stop other sources
             audioSource.PlayOneShot(fail);
+            crashParticle.Play();
+            
+            _movement.directParticle.Stop();
+            _movement.leftSideParticle.Stop();
+            _movement.rightSideParticle.Stop();
+            
             onSuccessOrFail = true;
         };
-        GetComponent<Movement>().enabled = false;
+        _movement.enabled = false;
         Invoke("ReloadLevel", levelLoadDelay);
     }
 
